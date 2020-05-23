@@ -1,8 +1,8 @@
 <template>
-    <div class="col-sm-4 col-md-4 col-lg-4">
+    <div class="col-sm-4 col-md-4 col-lg-4 mb-3">
         <div class="card">
+            <label class="order">{{ data.id }}</label>
             <div class="card-body">
-                <label class="order">{{ data.order }}</label>
                 <h5 class="text-capitalize">{{ data.name }}</h5>
                 <img :src="image" alt="gambar">
                 <p>{{ types }}</p>
@@ -42,6 +42,12 @@ export default {
 
 <style scoped>
 .order {
-    display: inline-block;
+    margin-left: 5px;
+    max-width: 40px;
+    height: 20px;
+    background: blue;
+    color: white;
+    font-weight: bold;
+    border-radius: 5px;
 }
 </style>
