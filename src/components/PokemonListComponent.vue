@@ -9,14 +9,17 @@
             @set-keyword="setKeywordData"/>
         </div>
         <div class="row mt-3" 
-            v-if="data && data.length > 0">
-            <pokemon-card-component 
+            v-if="!loading && data && data.length > 0">
+             <pokemon-card-component 
                 v-for="(val, key) in data"
                 :key="key"
                 :data="val" />
         </div>
-        <div v-else>
+        <div v-else-if="!loading && data.length === 0">
             Ga ada pokemon nya....
+        </div>
+        <div v-if="loading">
+            <p>Loading pokemon nya....</p> 
         </div>
     </div>
 </template>
@@ -24,7 +27,8 @@
 <script>
 import PokemonCardComponent from './PokemonCardComponent.vue'
 import SelectSearchComponent from './SelectSearchComponent.vue'
-import Pokemon from '../helpers/pokemon.js'
+import Pokemon from '../helpers/Pokemon.js'
+import PokemonList from '../helpers/PokemonList.js'
 
 export default {
     name: 'pokemon-list-component',
@@ -36,11 +40,13 @@ export default {
         return {
             data: [],
             limit: 50,
-            keyword: ''
+            keyword: '',
+            loading: false
         }
     },
     methods: {
         async getData() {
+            this.loading = true
             this.data = []
 
             if (this.keyword) {
@@ -49,21 +55,21 @@ export default {
                 this.data.push(data)
             } 
             else {
-                for (let index = 0; index < this.limit; index++) {
-                    const pokemon = new Pokemon()
-                    const data = await pokemon.getPokemon(index + 1)
-                    this.data.push(data)
-                }    
+                const pokemon = new Pokemon()
+                this.data = await new PokemonList(pokemon, this.limit).getManyPokemon()    
             }
+            this.loading = false
         },
         setLimitData(e) {
             this.limit = e
             this.getData()
         },
         setKeywordData(e) {
-            console.log(e)
             this.keyword = e
             this.getData()
+        },
+        sesuatu() {
+            this.loading = !this.loading
         }
     },
     async created() {
@@ -71,3 +77,13 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.fade-enter {
+    opacity: 0;
+}
+
+.fade-enter-active {
+    transition: 1 0.5s ease-in;
+}
+</style>
